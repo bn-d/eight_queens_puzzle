@@ -39,14 +39,19 @@ let place t i j =
     None
 
 let print t =
-  Printf.printf "\n";
+  let h_line =
+    String.init ((4 * t.n) + 1) (fun i -> if i mod 4 == 0 then '+' else '-')
+  in
+  Printf.printf "\n%s\n" h_line;
+
   for i = 0 to t.n - 1 do
     Printf.printf "|";
     for index = i * t.n to (i * t.n) + t.n - 1 do
       if Array.get t.board index = '\001' then
-        Printf.printf "Q"
+        Printf.printf " Q "
       else
-        Printf.printf "_"
+        Printf.printf "   ";
+      Printf.printf "|"
     done;
-    Printf.printf "|\n"
+    Printf.printf "\n%s\n" h_line
   done
