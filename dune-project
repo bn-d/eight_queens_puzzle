@@ -4,13 +4,13 @@
 
 (generate_opam_files false)
 
-(source (github erebuxy/8_queens_quzzle))
+(source (github erebuxy/eight_queens_quzzle))
 (license MIT)
 (authors "Boning <erebuxy@gmail.com>")
 (maintainers "Boning <erebuxy@gmail.com>")
-(documentation "https://github.com/erebuxy/8_queens_quzzle")
+(documentation "https://github.com/erebuxy/eight_queens_quzzle")
 
 (package
  (name eight_queens)
- (synopsis "8 queens puzzle"))
+ (synopsis "Eight queens puzzle"))
 

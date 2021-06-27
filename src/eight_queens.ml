@@ -1,5 +1,5 @@
-let rec rec_calculate cache (board : Board.t) =
-  if Board.left board = 0 then
+let rec rec_calculate i cache (board : Board.t) =
+  if i = board.n then
     let s = Board.to_string board in
     if Hashtbl.mem cache s then
       ()
@@ -9,14 +9,13 @@ let rec rec_calculate cache (board : Board.t) =
         |> List.iter (fun s -> Hashtbl.replace cache s 0)
       in
       let _ = Hashtbl.find cache "count" + 1 |> Hashtbl.replace cache "count" in
-      Board.print board
+      (*Board.print board*)
+      ()
   else
-    for i = 0 to board.n - 1 do
-      for j = 0 to board.n - 1 do
-        match Board.place board i j with
-        | Some new_board -> rec_calculate cache new_board
-        | None -> ()
-      done
+    for j = 0 to board.n - 1 do
+      match Board.place board i j with
+      | Some new_board -> rec_calculate (i + 1) cache new_board
+      | None -> ()
     done
 
 let caculate n =
@@ -32,13 +31,11 @@ let caculate n =
 
     let board = Board.make n in
     let half = float_of_int n /. 2. |> ceil |> int_of_float |> fun i -> i - 1 in
-    (* only put the first queen at the half of the upper left quarter *)
-    for i = 0 to half do
-      for j = i to half do
-        match Board.place board i j with
-        | Some new_board -> rec_calculate cache new_board
-        | None -> failwith "the first placement should never fail"
-      done
+
+    for j = 0 to half do
+      match Board.place board 0 j with
+      | Some new_board -> rec_calculate 1 cache new_board
+      | None -> failwith "the first placement should never fail"
     done;
     Printf.printf "\nfundamental: %d    all: %d\n"
       (Hashtbl.find cache "count")
