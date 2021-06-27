@@ -1,40 +1,37 @@
 (* 0 - empty
    1 - queen
    2 - blocked *)
-type t = { board : char array; n : int; left : int }
+type t = { board : char array; n : int }
 
-let make n = { board = Array.make (n * n) '\000'; n; left = n }
+let make n = { board = Array.make (n * n) '\000'; n }
 
-let index t i j = (t.n * i) + j
+let index n i j = (n * i) + j
 
-let get t i j = Array.get t.board (index t i j)
-
-let left t = t.left
+let set b n i j v = Array.set b (index n i j) v
 
 let place t i j =
-  let cell = get t i j in
-  if cell = '\000' then (
+  let n = t.n in
+  if Array.get t.board (index n i j) = '\000' then (
     let board = Array.copy t.board in
 
-    let set b i j v = Array.set b (index t i j) v in
-    (* block row *)
-    for jj = 0 to t.n - 1 do
-      set board i jj '\002'
+    if i < n - 1 then (
+      (* block col *)
+      for ii = i + 1 to n - 1 do
+        set board n ii j '\002'
+      done;
+      (* block dia *)
+      for ii = i + 1 to n - 1 do
+        let diff = i - ii in
+        let j1 = j + diff in
+        let j2 = j - diff in
+        if j1 >= 0 && j1 < n then set board n ii j1 '\002';
+        if j2 >= 0 && j2 < n then set board n ii j2 '\002'
+      done);
+    for jj = 0 to n - 1 do
+      set board n i jj '\000'
     done;
-    (* block col *)
-    for ii = 0 to t.n - 1 do
-      set board ii j '\002'
-    done;
-    (* block dia *)
-    for ii = 0 to t.n - 1 do
-      let diff = i - ii in
-      let j1 = j + diff in
-      let j2 = j - diff in
-      if j1 >= 0 && j1 < t.n then set board ii j1 '\002';
-      if j2 >= 0 && j2 < t.n then set board ii j2 '\002'
-    done;
-    set board i j '\001';
-    Some { board; n = t.n; left = t.left - 1 })
+    set board n i j '\001';
+    Some { board; n })
   else
     None
 

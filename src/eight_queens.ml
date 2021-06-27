@@ -2,6 +2,7 @@ let rec rec_calculate i cache (board : Board.t) =
   if i = board.n then
     let s = Board.to_string board in
     if Hashtbl.mem cache s then
+      let _ = Hashtbl.find cache "dup" + 1 |> Hashtbl.replace cache "dup" in
       ()
     else
       let _ =
@@ -28,6 +29,7 @@ let caculate n =
   else
     let cache = Hashtbl.create 1 in
     let _ = Hashtbl.add cache "count" 0 in
+    let _ = Hashtbl.add cache "dup" 0 in
 
     let board = Board.make n in
     let half = float_of_int n /. 2. |> ceil |> int_of_float |> fun i -> i - 1 in
@@ -37,9 +39,10 @@ let caculate n =
       | Some new_board -> rec_calculate 1 cache new_board
       | None -> failwith "the first placement should never fail"
     done;
-    Printf.printf "\nfundamental: %d    all: %d\n"
+    Printf.printf "\nfundamental: %d    all: %d\nDuplicated hit: %d\n"
       (Hashtbl.find cache "count")
-      (Hashtbl.length cache - 1)
+      (Hashtbl.length cache - 2)
+      (Hashtbl.find cache "dup")
 
 let () =
   let n =
