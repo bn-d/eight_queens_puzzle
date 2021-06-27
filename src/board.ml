@@ -55,3 +55,32 @@ let print t =
     done;
     Printf.printf "\n%s\n" h_line
   done
+
+let to_string t = String.of_seq (Array.to_seq t.board)
+
+let to_all_variant_strings t =
+  let n = t.n in
+  let size = n * n in
+  let b_000 = to_string t in
+  let b_090 =
+    String.init size (fun idx ->
+        let i = idx / n and j = idx mod n in
+        b_000.[n - 1 - i + (n * j)])
+  in
+  let b_180 = String.init size (fun idx -> b_000.[size - idx - 1]) in
+  let b_270 = String.init size (fun idx -> b_090.[size - idx - 1]) in
+
+  let r_000 =
+    String.init size (fun idx ->
+        let i = idx / n and j = idx mod n in
+        b_000.[((i + 1) * n) - 1 - j])
+  in
+  let r_090 =
+    String.init size (fun idx ->
+        let i = idx / n and j = idx mod n in
+        b_090.[((i + 1) * n) - 1 - j])
+  in
+  let r_180 = String.init size (fun idx -> r_000.[size - idx - 1]) in
+  let r_270 = String.init size (fun idx -> r_090.[size - idx - 1]) in
+
+  [ b_000; b_090; b_180; b_270; r_000; r_090; r_180; r_270 ]
