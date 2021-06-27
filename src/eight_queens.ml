@@ -32,9 +32,8 @@ let caculate n =
     let _ = Hashtbl.add cache "dup" 0 in
 
     let board = Board.make n in
-    let half = float_of_int n /. 2. |> ceil |> int_of_float |> fun i -> i - 1 in
 
-    for j = 0 to half do
+    for j = 0 to (board.n - 1) / 2 do
       match Board.place board 0 j with
       | Some new_board -> rec_calculate 1 cache new_board
       | None -> failwith "the first placement should never fail"

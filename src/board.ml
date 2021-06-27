@@ -1,9 +1,9 @@
 (* 0 - empty
    1 - queen
    2 - blocked *)
-type t = { board : char array; n : int }
+type t = { board : int array; n : int }
 
-let make n = { board = Array.make (n * n) '\000'; n }
+let make n = { board = Array.make (n * n) 0; n }
 
 let index n i j = (n * i) + j
 
@@ -11,26 +11,23 @@ let set b n i j v = Array.set b (index n i j) v
 
 let place t i j =
   let n = t.n in
-  if Array.get t.board (index n i j) = '\000' then (
+  if Array.get t.board (index n i j) = 0 then (
     let board = Array.copy t.board in
 
     if i < n - 1 then (
       (* block col *)
       for ii = i + 1 to n - 1 do
-        set board n ii j '\002'
+        set board n ii j 2
       done;
       (* block dia *)
       for ii = i + 1 to n - 1 do
         let diff = i - ii in
         let j1 = j + diff in
         let j2 = j - diff in
-        if j1 >= 0 && j1 < n then set board n ii j1 '\002';
-        if j2 >= 0 && j2 < n then set board n ii j2 '\002'
+        if j1 >= 0 && j1 < n then set board n ii j1 2;
+        if j2 >= 0 && j2 < n then set board n ii j2 2
       done);
-    for jj = 0 to n - 1 do
-      set board n i jj '\000'
-    done;
-    set board n i j '\001';
+    set board n i j 1;
     Some { board; n })
   else
     None
@@ -44,7 +41,7 @@ let print t =
   for i = 0 to t.n - 1 do
     Printf.printf "|";
     for index = i * t.n to (i * t.n) + t.n - 1 do
-      if Array.get t.board index = '\001' then
+      if Array.get t.board index = 1 then
         Printf.printf " Q "
       else
         Printf.printf "   ";
@@ -53,7 +50,8 @@ let print t =
     Printf.printf "\n%s\n" h_line
   done
 
-let to_string t = String.of_seq (Array.to_seq t.board)
+let to_string t =
+  String.init (t.n * t.n) (fun idx -> if t.board.(idx) = 1 then 'Q' else '-')
 
 let to_all_variant_strings t =
   let n = t.n in
